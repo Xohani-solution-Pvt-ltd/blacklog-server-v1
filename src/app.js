@@ -15,6 +15,10 @@ const hostname = process.env.HOSTNAME;
 const port = process.env.PORT || 3000;
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+app.use(cookieParser());
+
 app.use(cors({ origin: '*' }))
 app.use(express.json());
 app.use("/api/v1/", router);
@@ -24,9 +28,9 @@ app.use("/api/v1/", testRouter);
 app.use("/api/v1/", carRouter);
 app.use("/api/v1", vehicleRoute);
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(cookieParser());
+app.use("/api/v1/healthcheck",(req, res)=>{res.send("healthcheck")});
+
+
 
 
 app.listen(port, () => {
