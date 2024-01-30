@@ -2,7 +2,7 @@ const router = require("express").Router();
 const CarModel = require("../models/car");
 const multer = require("multer");
 const path = require("path");
-
+const GyroModel = require("../models/gyro");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '../public/carImage'), function (error) {
@@ -71,7 +71,6 @@ router.get("/fetchsingleCar", async (req, res) => {
     try {
         const req_Data = req.query.vehicleNo;
         const vehicleData = await CarModel.find({ vehicleNo: req_Data });
-        console.log("dataofvehicle", req_Data);
         if (vehicleData) {
             res.json({
                 message: "vehicle data fetched successfully",
@@ -89,6 +88,71 @@ router.get("/fetchsingleCar", async (req, res) => {
     } catch (error) {
         res.json({
             message: error.massage
+        })
+    }
+})
+
+router.get("/fetchvehicleGyroData", async (req, res) => {
+    try {
+        const req_vhicleNo = req.query.vehicleNo;
+        const req_date = req.query.Date;
+
+        const data = await CarModel.find({ vehicleNo: req_vhicleNo });
+
+        if (data.length > 0) {
+            const vehicleNo = data[0].vehicleNo;
+
+            const fetchdata = await GyroModel.find({ vehicleNo: vehicleNo, Date: req_date });
+
+            if (fetchdata.length > 0) {
+                res.json({
+                    message: "Vehicle data fetched successfully",
+                    success: true,
+                    status: 201,
+                    fetchdata
+                });
+            } else {
+                res.json({
+                    message: "VehicleNo data not present in GyroModel",
+                    success: true,
+                    status: 201
+                });
+            }
+        } else {
+            res.json({
+                message: "Requested data not exist",
+                success: true,
+                status: 201
+            });
+        }
+    } catch (error) {
+        res.json({
+            message: error.message
+        });
+    }
+});
+router.delete("/removeVehicle", async (req, res) => {
+    try {
+        const data = req.query.id;
+        const removeId = await CarModel.findByIdAndDelete(data);
+        if (removeId) {
+            res.json({
+                status: 201,
+                message: "Vehicle Removed successfully",
+                removeId,
+                success: true
+            })
+        } else {
+            res.json({
+                status: 404,
+                message: "Data Not Exist",
+                success: false
+            })
+        }
+    } catch (error) {
+        res.json({
+            status: 404,
+            message: message.error
         })
     }
 })
