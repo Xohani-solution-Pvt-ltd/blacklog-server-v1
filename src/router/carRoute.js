@@ -152,7 +152,7 @@ router.delete("/removeVehicle", async (req, res) => {
     } catch (error) {
         res.json({
             status: 404,
-            message: message.error
+            message:error.message
         })
     }
 })
