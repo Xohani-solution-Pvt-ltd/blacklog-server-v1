@@ -104,7 +104,7 @@ const gyroSchema = new mongoose.Schema({
     temperature: {
         type: String
     },
-    car:{
+    car: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Car"
     }
