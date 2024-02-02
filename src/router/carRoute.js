@@ -92,45 +92,7 @@ router.get("/fetchsingleCar", async (req, res) => {
     }
 })
 
-router.get("/fetchvehicleGyroData", async (req, res) => {
-    try {
-        const req_vhicleNo = req.query.vehicleNo;
-        const req_date = req.query.Date;
 
-        const data = await CarModel.find({ vehicleNo: req_vhicleNo });
-
-        if (data.length > 0) {
-            const vehicleNo = data[0].vehicleNo;
-
-            const fetchdata = await GyroModel.find({ vehicleNo: vehicleNo, Date: req_date });
-
-            if (fetchdata.length > 0) {
-                res.json({
-                    message: "Vehicle data fetched successfully",
-                    success: true,
-                    status: 201,
-                    fetchdata
-                });
-            } else {
-                res.json({
-                    message: "VehicleNo data not present in GyroModel",
-                    success: true,
-                    status: 201
-                });
-            }
-        } else {
-            res.json({
-                message: "Requested data not exist",
-                success: true,
-                status: 201
-            });
-        }
-    } catch (error) {
-        res.json({
-            message: error.message
-        });
-    }
-});
 router.delete("/removeVehicle", async (req, res) => {
     try {
         const data = req.query.id;
@@ -152,7 +114,7 @@ router.delete("/removeVehicle", async (req, res) => {
     } catch (error) {
         res.json({
             status: 404,
-            message:error.message
+            message: message.error
         })
     }
 })
