@@ -74,9 +74,3 @@ router.delete("/deleteGyro/id", async (req, res) => {
 
 module.exports = router;
 
-
-
-
-
-
-
