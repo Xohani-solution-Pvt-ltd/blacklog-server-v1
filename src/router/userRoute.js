@@ -3,7 +3,7 @@ const UserRegistrationModel = require('../models/registration');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer");
-const randomstring = require("randomstring");
+const randomstring = require("randomstring"); 
 
 
 router.post("/register", async (req, res) => {
