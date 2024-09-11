@@ -6,4 +6,4 @@ mongoose.connect("mongodb://13.232.113.131/gyroDB").then(() => {
     console.log(" No connection ");
 });
 
-import mongoose, { Mongoose } from "mongoose";
+
