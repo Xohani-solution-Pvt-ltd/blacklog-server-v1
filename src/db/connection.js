@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-mongoose.connect("mongodb://13.232.113.131/gyroDB").then(() => {
-    console.log("connection successfully");
+mongoose.connect("mongodb://localhost:27017/gyroDB").then(() => {
+    console.log("connection successfull");
 }).catch((e) => {
-    console.log(" No connection ");
+    console.log("No connection");
 });
 
 
