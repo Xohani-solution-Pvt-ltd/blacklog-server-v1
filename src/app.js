@@ -29,6 +29,10 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 
-app.listen(port, () => {
-    console.log(`connection is live at host and port :${hostname}:${port}`);
-})
+// app.listen(port, () => {
+//     console.log(`connection is live at host and port :${hostname}:${port}`);
+// })
+
+app.listen(3000, '0.0.0.0', () => {
+    console.log('Server running on port 3000');
+});
