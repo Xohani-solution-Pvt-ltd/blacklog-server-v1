@@ -211,3 +211,4 @@ const handleWebSocketMessage = async (data) => {
 
 // Export the router and the WebSocket handler
 module.exports = { router, handleWebSocketMessage };
+module.exports = router;
