@@ -102,6 +102,9 @@ wss.on('connection', (ws) => {
 });
 
 // Start the server
-server.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://${hostname}:${port}`);
+// server.listen(port, '0.0.0.0', () => {
+//     console.log(`Server running on http://${hostname}:${port}`);
+// });
+app.listen(3000, '0.0.0.0', () => {
+    console.log('Server running on port 3000');
 });
