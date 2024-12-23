@@ -77,9 +77,9 @@ const mqttClient = mqtt.connect('mqtt://13.233.153.54');  // Replace with your b
 
 mqttClient.on('connect', () => {
     console.log('Connected to MQTT Broker');
-    mqttClient.subscribe('devices/gyroData/#', (err) => {  // Subscribe to all topics under `devices/gyroData`
+    mqttClient.subscribe('test/topic', (err) => {  // Subscribe to all topics under `devices/gyroData`
         if (!err) {
-            console.log('Subscribed to devices/gyroData topic');
+            console.log('Subscribed to test/topic topic');
         }
     });
 });
@@ -100,7 +100,7 @@ mqttClient.on('message', async (topic, message) => {
         });
 
         await gyroPostData.save();  // Save data to MongoDB
-        console.log(`Gyro data from ${vehicleNo} saved successfully`);
+        console.log(`Device data from ${vehicleNo} saved successfully`);
     } catch (error) {
         console.error('Error processing MQTT message:', error);
     }
