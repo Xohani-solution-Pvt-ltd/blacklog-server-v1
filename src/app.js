@@ -188,24 +188,104 @@
 // module.exports = { app };
 // web socket code end ----->
 
+// const express = require("express");
+// const cookieParser = require('cookie-parser');
+// require('dotenv').config({ path: ".env" });
+// require("../src/db/connection");
+// const router = require("./router/router");
+// const userRouter = require('./router/userRoute');
+// const editRouter = require('./router/editRouter');
+// const testRouter = require('./router/testRoute');
+// const carRouter = require('./router/carRoute');
+// const vehicleRoute = require('./router/vehicleRoute');
+// const cors = require('cors');
+// const WebSocket = require('ws');
+
+// const hostname = process.env.HOSTNAME;
+// const port = process.env.PORT || 3000;
+// const app = express();
+
+// app.use(cors({ origin: '*' }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.static("public"));
+// app.use(cookieParser());
+
+// app.use("/api/v1/", router);
+// app.use("/api/v1/", userRouter);
+// app.use("/api/v1/", editRouter);
+// app.use("/api/v1/", testRouter);
+// app.use("/api/v1/", carRouter);
+// app.use("/api/v1", vehicleRoute);
+
+// // Create HTTP server
+// const server = app.listen(3000, '0.0.0.0', () => {
+//     console.log(`Server running on port ${3000}`);
+// });
+
+// // WebSocket connections to both servers
+// const sockets = [
+//     new WebSocket('ws://3.110.10.75:1337'), // First server
+//     new WebSocket('ws://13.233.139.30:1337') // Second server
+// ];
+
+// // Function to handle connection events
+// sockets.forEach((socket, index) => {
+//     socket.on('open', () => {
+//         console.log(`WebSocket ${index + 1} connected`);
+//         // Send an initial message
+//         socket.send(`Hello Server from connection ${index + 1}`);
+//     });
+
+//     socket.on('message', (data) => {
+//         console.log(`Message from server ${index + 1}:`, data.toString());
+//     });
+
+//     socket.on('close', () => {
+//         console.log(`WebSocket ${index + 1} disconnected`);
+//     });
+
+//     socket.on('error', (error) => {
+//         console.error(`Error on WebSocket ${index + 1}:`, error.message);
+//     });
+// });
+
+// // Send data in a loop
+// setInterval(() => {
+//     sockets.forEach((socket, index) => {
+//         if (socket.readyState === WebSocket.OPEN) {
+//             // Customize message for each WebSocket connection
+//             const message = index === 0
+//                 ? "Message for Server 1" // Message for the first server
+//                 : "Message for Server 2"; // Message for the second server
+
+//             socket.send(message);
+//             console.log(`Sent to WebSocket ${index + 1}:`, message);
+//         }
+//     });
+// }, 20000); // Send every 20 seconds
+
+// module.exports = { app };
+
+
 const express = require("express");
-const cookieParser = require('cookie-parser');
-require('dotenv').config({ path: ".env" });
+const cookieParser = require("cookie-parser");
+require("dotenv").config({ path: ".env" });
 require("../src/db/connection");
 const router = require("./router/router");
-const userRouter = require('./router/userRoute');
-const editRouter = require('./router/editRouter');
-const testRouter = require('./router/testRoute');
-const carRouter = require('./router/carRoute');
-const vehicleRoute = require('./router/vehicleRoute');
-const cors = require('cors');
-const WebSocket = require('ws');
+const userRouter = require("./router/userRoute");
+const editRouter = require("./router/editRouter");
+const testRouter = require("./router/testRoute");
+const carRouter = require("./router/carRoute");
+const vehicleRoute = require("./router/vehicleRoute");
+const cors = require("cors");
+const { WebSocketServer } = require("ws");
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT || 3000;
 const app = express();
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -219,51 +299,83 @@ app.use("/api/v1/", carRouter);
 app.use("/api/v1", vehicleRoute);
 
 // Create HTTP server
-const server = app.listen(3000, '0.0.0.0', () => {
-    console.log(`Server running on port ${3000}`);
+const server = app.listen(3000, "0.0.0.0", () => {
+  console.log(`Server running on port ${3000}`);
 });
 
-// WebSocket connections to both servers
+// Create WebSocket server
+const wss = new WebSocketServer({ server });
+
+wss.on("connection", (ws) => {
+  console.log("New WebSocket connection established");
+
+  // Send a welcome message to the client
+  ws.send("Welcome to the WebSocket server!");
+
+  // Listen for incoming messages
+  ws.on("message", (data) => {
+    console.log("Received from client:", data.toString());
+    // Echo the received message back to the client
+    ws.send("Message received: " + data);
+  });
+
+  // Handle WebSocket errors
+  ws.on("error", (err) => {
+    console.error("WebSocket error:", err);
+  });
+
+  // Handle connection closure
+  ws.on("close", () => {
+    console.log("WebSocket connection closed");
+  });
+});
+
+// Handle WebSocket server errors
+wss.on("error", (err) => {
+  console.error("WebSocket Server error:", err);
+});
+
+// Connect to external WebSocket servers
+const WebSocket = require("ws");
 const sockets = [
-    new WebSocket('ws://3.110.10.75:1337'), // First server
-    new WebSocket('ws://13.233.139.30:1337') // Second server
+  new WebSocket("ws://3.110.10.75:1337"), // First server
+  new WebSocket("ws://13.233.139.30:1337"), // Second server
 ];
 
-// Function to handle connection events
+// Function to handle connection events for external WebSocket servers
 sockets.forEach((socket, index) => {
-    socket.on('open', () => {
-        console.log(`WebSocket ${index + 1} connected`);
-        // Send an initial message
-        socket.send(`Hello Server from connection ${index + 1}`);
-    });
+  socket.on("open", () => {
+    console.log(`External WebSocket ${index + 1} connected`);
+    socket.send(`Hello Server from connection ${index + 1}`);
+  });
 
-    socket.on('message', (data) => {
-        console.log(`Message from server ${index + 1}:`, data.toString());
-    });
+  socket.on("message", (data) => {
+    console.log(`Message from external server ${index + 1}:`, data.toString());
+  });
 
-    socket.on('close', () => {
-        console.log(`WebSocket ${index + 1} disconnected`);
-    });
+  socket.on("close", () => {
+    console.log(`External WebSocket ${index + 1} disconnected`);
+  });
 
-    socket.on('error', (error) => {
-        console.error(`Error on WebSocket ${index + 1}:`, error.message);
-    });
+  socket.on("error", (error) => {
+    console.error(`Error on external WebSocket ${index + 1}:`, error.message);
+  });
 });
 
-// Send data in a loop
+// Periodically send data to external WebSocket servers
 setInterval(() => {
-    sockets.forEach((socket, index) => {
-        if (socket.readyState === WebSocket.OPEN) {
-            // Customize message for each WebSocket connection
-            const message = index === 0
-                ? "Message for Server 1" // Message for the first server
-                : "Message for Server 2"; // Message for the second server
+  sockets.forEach((socket, index) => {
+    if (socket.readyState === WebSocket.OPEN) {
+      const message =
+        index === 0
+          ? "Message for External Server 1"
+          : "Message for External Server 2";
 
-            socket.send(message);
-            console.log(`Sent to WebSocket ${index + 1}:`, message);
-        }
-    });
-}, 20000); // Send every 20 seconds
+      socket.send(message);
+      console.log(`Sent to external WebSocket ${index + 1}:`, message);
+    }
+  });
+}, 20000); // Every 20 seconds
 
 module.exports = { app };
 
