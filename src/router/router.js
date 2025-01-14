@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const gyroModel = require("../models/gyro");
 const carModel = require("../models/car");
+const { wss } = require('../app');
 
 //POST REQ
 // router.post("/addGyro", async (req, res) => {
@@ -22,6 +23,27 @@ const carModel = require("../models/car");
 //     }
 // })
 
+// for mqtt ----->
+// router.post("/addGyro", async (req, res) => {
+//     try {
+//         const data = req.body;
+//         const { vehicleNo } = data;
+
+//         const carData = await carModel.findOne({ vehicleNo });
+//         const gyroPostData = new gyroModel({
+//             ...data,
+//             car: carData ? carData._id : null
+//         });
+
+//         await gyroPostData.save();
+//         res.status(200).json({ message: "Gyro Data Added Successfully" });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: "Error saving gyro data" });
+//     }
+// });
+
+// for web socket ----->
 router.post("/addGyro", async (req, res) => {
     try {
         const data = req.body;
@@ -34,12 +56,22 @@ router.post("/addGyro", async (req, res) => {
         });
 
         await gyroPostData.save();
+
+        // Notify WebSocket clients about the new gyro data
+        const message = JSON.stringify({ type: "new_gyro_data", data });
+        wss.clients.forEach(client => {
+            if (client.readyState === 1) { // Ensure the WebSocket is open
+                client.send(message);
+            }
+        });
+
         res.status(200).json({ message: "Gyro Data Added Successfully" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error saving gyro data" });
     }
 });
+
 
 // GET REQ
 router.get("/fetchGyro", async (req, res) => {
